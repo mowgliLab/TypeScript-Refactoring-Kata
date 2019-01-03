@@ -30,4 +30,22 @@ describe('Gilded Rose', function () {
         });
     });
 
+    describe('AGED BRIE CASES', function () {
+        // "Aged Brie" actually increases in Quality the older it gets
+        it('should increase quality with time', function () {
+            const brieItem = new Item("Aged Brie", 2, 0);
+            const gildedRose = new GildedRose([brieItem]);
+            const initialValue = brieItem.quality;
+            gildedRose.updateQuality();
+            expect(initialValue - brieItem.quality).to.equal(-1);
+        });
+
+        // The Quality of an item is never more than 50
+        it('should quality never be more than 50', function () {
+            const brieItem = new Item("Aged Brie", 2, 50);
+            const gildedRose = new GildedRose([brieItem]);
+            gildedRose.updateQuality();
+            expect(brieItem.quality).to.equal(50);
+        });
+    });
 });
