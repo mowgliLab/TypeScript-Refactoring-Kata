@@ -13,46 +13,21 @@ export class GildedRose {
             const currentItem = this.items[i];
             const itemType = this.getItemType(currentItem.name);
 
-            // If sulfura, do nothing
+            // If sulfuras, do nothing
             if (itemType !== ItemTypeEnum.Sulfuras) {
                 currentItem.sellIn = currentItem.sellIn - 1;
-
-                // Normal case (decreasing case)
-                if (itemType === ItemTypeEnum.Normal) {
-                    // Don't pass under 0 quality.
-                    currentItem.quality = this.decreaseQuality(currentItem.quality);
-                } else {
-                    // Other cases (increasing)
-                    // don't go above 50
-                    if (currentItem.quality < 50) {
-                        currentItem.quality = currentItem.quality + 1;
-                        if (itemType === ItemTypeEnum.BackstagePasses) {
-                            // If backstage and less than 10 days, increase once more (+2)
-                            if (currentItem.sellIn < 11) {
-                                currentItem.quality = this.increaseQuality(currentItem.quality);
-                                // If backstage and less than 5 days, increase once more (+3)
-                                if (currentItem.sellIn < 6) {
-                                    currentItem.quality = this.increaseQuality(currentItem.quality);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // case when sell in is less than 0
-                if (currentItem.sellIn < 0) {
-                    if (itemType !== ItemTypeEnum.AgedBrie) {
-                        if (itemType === ItemTypeEnum.Normal) {
-                            // Normal case decrease once more (-2)
-                            currentItem.quality = this.decreaseQuality(currentItem.quality);
-                        } else {
-                            // backstage, set to zero if date is passed.
-                            currentItem.quality = currentItem.quality - currentItem.quality
-                        }
-                    } else {
-                        // case of aged brie increase once more if less than 50 (+2)
-                        currentItem.quality = this.increaseQuality(currentItem.quality);
-                    }
+                switch (itemType) {
+                    case ItemTypeEnum.AgedBrie:
+                        this.manageAgedBrieType(currentItem);
+                        break;
+                    case ItemTypeEnum.BackstagePasses:
+                        this.manageBackstageType(currentItem);
+                        break;
+                    case ItemTypeEnum.Conjured:
+                        break;
+                    default:
+                        this.manageNormalType(currentItem);
+                        break;
                 }
             }
         }
@@ -80,5 +55,35 @@ export class GildedRose {
 
     private increaseQuality(quality: number): number {
         return quality < 50 ? quality + 1 : quality;
+    }
+
+    private manageBackstageType(item: Item) {
+        if (item.sellIn < 0) {
+            item.quality = 0;
+        } else {
+            item.quality = this.increaseQuality(item.quality);
+            // If backstage and less than 10 days, increase once more (+2)
+            if (item.sellIn < 11) {
+                item.quality = this.increaseQuality(item.quality);
+                // If backstage and less than 5 days, increase once more (+3)
+                if (item.sellIn < 6) {
+                    item.quality = this.increaseQuality(item.quality);
+                }
+            }
+        }
+    }
+
+    private manageAgedBrieType(item: Item) {
+        item.quality = this.increaseQuality(item.quality);
+        if (item.sellIn < 0) {
+            item.quality = this.increaseQuality(item.quality);
+        }
+    }
+
+    private manageNormalType(item: Item) {
+        item.quality = this.decreaseQuality(item.quality);
+        if (item.sellIn < 0) {
+            item.quality = this.decreaseQuality(item.quality);
+        }
     }
 }
