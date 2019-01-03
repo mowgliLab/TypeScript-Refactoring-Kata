@@ -62,4 +62,51 @@ describe('Gilded Rose', function () {
         });
     });
 
+    describe('BACKSTAGE PASSES CASES', function () {
+        // "Backstage passes", like aged brie, increases in Quality as its SellIn value approaches;
+        it('should increase quality with time (> 10 days)', function () {
+            const backstageItem = new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20);
+            const gildedRose = new GildedRose([backstageItem]);
+            const initialQuality = backstageItem.quality;
+            const initialDays = backstageItem.sellIn;
+            expect(initialDays).gt(10);
+            gildedRose.updateQuality();
+            expect(initialQuality - backstageItem.quality).to.equal(-1);
+        });
+
+        // Quality increases by 2 when there are 10 days or less
+        it('should increase quality with time (> 5 and <= 10 days)', function () {
+            const backstageItem = new Item("Backstage passes to a TAFKAL80ETC concert", 10, 20);
+            const gildedRose = new GildedRose([backstageItem]);
+            const initialQuality = backstageItem.quality;
+            const initialDays = backstageItem.sellIn;
+            expect(initialDays).lte(10);
+            expect(initialDays).gt(5);
+            gildedRose.updateQuality();
+            expect(initialQuality - backstageItem.quality).to.equal(-2);
+        });
+
+        // Quality increases by 3 when there are 5 days or less
+        it('should increase quality with time (> 0 day and <= 5 days)', function () {
+            const backstageItem = new Item("Backstage passes to a TAFKAL80ETC concert", 5, 20);
+            const gildedRose = new GildedRose([backstageItem]);
+            const initialQuality = backstageItem.quality;
+            const initialDays = backstageItem.sellIn;
+            expect(initialDays).lte(5);
+            expect(initialDays).gt(0);
+            gildedRose.updateQuality();
+            expect(initialQuality - backstageItem.quality).to.equal(-3);
+        });
+
+        // Quality drops to 0 after the concert
+        it('should be 0 after the concert', function () {
+            const backstageItem = new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20);
+            const gildedRose = new GildedRose([backstageItem]);
+            const initialQuality = backstageItem.quality;
+            const initialDays = backstageItem.sellIn;
+            gildedRose.updateQuality();
+            expect(backstageItem.quality).to.equal(0);
+        });
+    });
+
 });
