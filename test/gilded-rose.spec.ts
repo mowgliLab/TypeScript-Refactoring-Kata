@@ -48,4 +48,18 @@ describe('Gilded Rose', function () {
             expect(brieItem.quality).to.equal(50);
         });
     });
+
+    describe('SULFURA CASES', function () {
+        // "Sulfuras", being a legendary item, never has to be sold or decreases in Quality
+        it('should days and quality not moving', function () {
+            const sulfuraItem = new Item("Sulfuras, Hand of Ragnaros", 2, 80);
+            const gildedRose = new GildedRose([sulfuraItem]);
+            const initialQuality = sulfuraItem.quality;
+            const initialDays = sulfuraItem.sellIn;
+            gildedRose.updateQuality();
+            expect(initialQuality - sulfuraItem.quality).to.equal(0);
+            expect(initialDays - sulfuraItem.sellIn).to.equal(0);
+        });
+    });
+
 });
