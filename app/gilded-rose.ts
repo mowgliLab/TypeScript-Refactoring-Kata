@@ -18,16 +18,16 @@ export class GildedRose {
                 currentItem.sellIn = currentItem.sellIn - 1;
                 switch (itemType) {
                     case ItemTypeEnum.AgedBrie:
-                        this.manageAgedBrieType(currentItem);
+                        this.manageGenericType(currentItem, this.increaseQuality);
                         break;
                     case ItemTypeEnum.BackstagePasses:
                         this.manageBackstageType(currentItem);
                         break;
                     case ItemTypeEnum.Conjured:
-                        this.manageConjuredType(currentItem);
+                        this.manageGenericType(currentItem, i => this.decreaseQuality(i, 2));
                         break;
                     default:
-                        this.manageNormalType(currentItem);
+                        this.manageGenericType(currentItem, this.decreaseQuality);
                         break;
                 }
             }
@@ -36,6 +36,10 @@ export class GildedRose {
         return this.items;
     }
 
+    /**
+     * Get the type of item from the item name.
+     * @param name
+     */
     private getItemType(name: string): ItemTypeEnum {
         if (name.indexOf(ItemTypeEnum.Sulfuras) > -1) {
             return ItemTypeEnum.Sulfuras;
@@ -50,14 +54,27 @@ export class GildedRose {
         }
     }
 
-    private decreaseQuality(quality: number): number {
-        return quality > 0 ? quality - 1 : quality;
+    /**
+     * Compute the new quality and check whether it could be decreased
+     * @param quality
+     * @param step
+     */
+    private decreaseQuality(quality: number, step = 1): number {
+        return quality > 0 ? quality - step : quality;
     }
 
+    /**
+     * Compute the new quality and check whether it could be increased.
+     * @param quality
+     */
     private increaseQuality(quality: number): number {
         return quality < 50 ? quality + 1 : quality;
     }
 
+    /**
+     * Manage the computation of quality for backstage type.
+     * @param item
+     */
     private manageBackstageType(item: Item) {
         if (item.sellIn < 0) {
             item.quality = 0;
@@ -74,26 +91,15 @@ export class GildedRose {
         }
     }
 
-    private manageAgedBrieType(item: Item) {
-        item.quality = this.increaseQuality(item.quality);
+    /**
+     * Group similar ways of managing quality.
+     * @param item
+     * @param updateQualityFunc : a function to compute the quality.
+     */
+    private manageGenericType(item: Item, updateQualityFunc: any) {
+        item.quality = updateQualityFunc(item.quality);
         if (item.sellIn < 0) {
-            item.quality = this.increaseQuality(item.quality);
-        }
-    }
-
-    private manageNormalType(item: Item) {
-        item.quality = this.decreaseQuality(item.quality);
-        if (item.sellIn < 0) {
-            item.quality = this.decreaseQuality(item.quality);
-        }
-    }
-
-    private manageConjuredType(item: Item) {
-        item.quality = this.decreaseQuality(item.quality);
-        item.quality = this.decreaseQuality(item.quality);
-        if (item.sellIn < 0) {
-            item.quality = this.decreaseQuality(item.quality);
-            item.quality = this.decreaseQuality(item.quality);
+            item.quality = updateQualityFunc(item.quality);
         }
     }
 }
