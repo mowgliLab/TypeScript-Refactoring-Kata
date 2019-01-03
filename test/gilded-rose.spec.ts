@@ -7,18 +7,18 @@ describe('Gilded Rose', function () {
         it('should quality decrease normally if day has not passed', function() {
             const normalItem = new Item("+5 Dexterity Vest", 10, 20);
             const gildedRose = new GildedRose([normalItem]);
-            const initialValue = normalItem.quality;
+            const initialQuality = normalItem.quality;
             gildedRose.updateQuality();
-            expect(initialValue - normalItem.quality).to.equal(1);
+            expect(initialQuality - normalItem.quality).to.equal(1);
         });
 
         // Once the sell by date has passed, Quality degrades twice as fast
         it('should quality decrease twice faster if day has passed', function() {
             const normalItem = new Item("+5 Dexterity Vest", 0, 20);
             const gildedRose = new GildedRose([normalItem]);
-            const initialValue = normalItem.quality;
+            const initialQuality = normalItem.quality;
             gildedRose.updateQuality();
-            expect(initialValue - normalItem.quality).to.equal(2);
+            expect(initialQuality - normalItem.quality).to.equal(2);
         });
 
         // The Quality of an item is never negative
@@ -35,9 +35,9 @@ describe('Gilded Rose', function () {
         it('should increase quality with time', function () {
             const brieItem = new Item("Aged Brie", 2, 0);
             const gildedRose = new GildedRose([brieItem]);
-            const initialValue = brieItem.quality;
+            const initialQuality = brieItem.quality;
             gildedRose.updateQuality();
-            expect(initialValue - brieItem.quality).to.equal(-1);
+            expect(initialQuality - brieItem.quality).to.equal(-1);
         });
 
         // The Quality of an item is never more than 50
@@ -102,11 +102,19 @@ describe('Gilded Rose', function () {
         it('should be 0 after the concert', function () {
             const backstageItem = new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20);
             const gildedRose = new GildedRose([backstageItem]);
-            const initialQuality = backstageItem.quality;
-            const initialDays = backstageItem.sellIn;
             gildedRose.updateQuality();
             expect(backstageItem.quality).to.equal(0);
         });
     });
 
+    describe('CONJURED CASES', function () {
+        // "Conjured" items degrade in Quality twice as fast as normal items
+        it('should decrease twice as fast as normal items', function () {
+            const conjuredItem = new Item("Conjured Mana Cake", 3, 6);
+            const gildedRose = new GildedRose([conjuredItem]);
+            const initialQuality = conjuredItem.quality;
+            gildedRose.updateQuality();
+            expect(initialQuality - conjuredItem.quality).to.equal(2);
+        });
+    });
 });
