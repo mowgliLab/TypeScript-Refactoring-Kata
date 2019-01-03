@@ -110,7 +110,7 @@ describe('Gilded Rose', function () {
 
     describe('CONJURED CASES', function () {
         // "Conjured" items degrade in Quality twice as fast as normal items
-        xit('should decrease twice as fast as normal items', function () {
+        it('should decrease twice as fast as normal items', function () {
             const conjuredItem = new Item("Conjured Mana Cake", 3, 6);
             const gildedRose = new GildedRose([conjuredItem]);
             const initialQuality = conjuredItem.quality;

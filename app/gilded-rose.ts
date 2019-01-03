@@ -24,6 +24,7 @@ export class GildedRose {
                         this.manageBackstageType(currentItem);
                         break;
                     case ItemTypeEnum.Conjured:
+                        this.manageConjuredType(currentItem);
                         break;
                     default:
                         this.manageNormalType(currentItem);
@@ -83,6 +84,15 @@ export class GildedRose {
     private manageNormalType(item: Item) {
         item.quality = this.decreaseQuality(item.quality);
         if (item.sellIn < 0) {
+            item.quality = this.decreaseQuality(item.quality);
+        }
+    }
+
+    private manageConjuredType(item: Item) {
+        item.quality = this.decreaseQuality(item.quality);
+        item.quality = this.decreaseQuality(item.quality);
+        if (item.sellIn < 0) {
+            item.quality = this.decreaseQuality(item.quality);
             item.quality = this.decreaseQuality(item.quality);
         }
     }
